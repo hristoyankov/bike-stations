@@ -1,7 +1,12 @@
 (ns bike-stations.core
-  (:gen-class))
+  (:require [ring.adapter.jetty :refer [run-jetty]]))
+
+(defn handler [req]
+  {:status 200
+   :headers {"Content-Type" "text/html"}
+   :body "Hello World!"})
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Start the jetty server."
   [& args]
-  (println "Hello, World!"))
+  (run-jetty handler {:port 3000}))
