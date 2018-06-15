@@ -1,10 +1,11 @@
 (ns bike-stations.core
-  (:require [ring.adapter.jetty :refer [run-jetty]]
-            [ring.middleware.basic-authentication :refer [wrap-basic-authentication]]
+  (:require [ring.adapter.jetty :as jetty]
             [reitit.ring :as ring]
-            [bike-stations.handlers :as handlers]))
+            [bike-stations.handlers :as handlers]
+            [bike-stations.auth :as auth]
+            [ring.middleware.basic-authentication :as http-auth]))
 
-(def handler
+(def routes
   (ring/ring-handler
    (ring/router
     [["/" {:get {:handler handlers/hello}}]
@@ -14,18 +15,13 @@
       [".json" {:get {:handler handlers/bike-stations-json}}]]])
    (ring/create-default-handler)))
 
-(defn authenticated? [name pass]
-  (let [users-db (read-string (slurp "users_db.clj"))
-        user (first (filter #(= (:name %) name) users-db))]
-    (when user
-      (= (:password user) pass))))
-
-(def app (-> handler
-             (wrap-basic-authentication authenticated?)))
-
 (defn -main
   "Start the jetty server."
   [& args]
-  (run-jetty app {:port 3000}))
+  (jetty/run-jetty
+   (http-auth/wrap-basic-authentication
+    routes
+    auth/authenticated?)
+   {:port 3000}))
 
 
