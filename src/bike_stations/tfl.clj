@@ -1,5 +1,6 @@
 (ns bike-stations.tfl
-  (:require [clojure.data.json :as json]))
+  (:require [clojure.data.json :as json]
+            [haversine.core :as haversine]))
 
 (def tfl-bike-stations-endpoint
   (str "https://api.tfl.gov.uk/BikePoint?"
@@ -9,9 +10,9 @@
 (def tfl-bike-stations
   (-> tfl-bike-stations-endpoint
       slurp
-      json/read-str :key-fn keyword))
+      (json/read-str :key-fn keyword)))
 
-(defn get-int-prop [tfl-bike-station prop]
+(defn- get-int-prop [tfl-bike-station prop]
   (->> tfl-bike-station
       :additionalProperties
       (filter #(= (:key %) prop))
@@ -19,25 +20,25 @@
       :value
       Integer/parseInt))
 
-(defn get-docks [tfl-bike-station]
+(defn- get-docks [tfl-bike-station]
   (get-int-prop tfl-bike-station "NbDocks"))
 
-(defn get-bikes [tfl-bike-station]
+(defn- get-bikes [tfl-bike-station]
   (get-int-prop tfl-bike-station "NbBikes"))
 
-(defn get-spaces [tfl-bike-station]
+(defn- get-spaces [tfl-bike-station]
   (get-int-prop tfl-bike-station "NbEmptyDocks"))
 
-(defn tfl->bike-station [tfl]
+(defn- tfl->bike-station [tfl]
   {:id (:id tfl)
-   :name (:name tfl)
+   :name (:commonName tfl)
    :lat (:lat tfl)
    :lon (:lon tfl)
    :docks (get-docks tfl)
    :bikes (get-bikes tfl)
    :spaces (get-spaces tfl)})
 
-(defn valid? [{:keys [docks bikes spaces]}]
+(defn- valid? [{:keys [docks bikes spaces]}]
   (= 0 (- docks bikes spaces)))
 
 (def bike-stations
@@ -45,7 +46,9 @@
        (map tfl->bike-station)
        (filter valid?)))
 
-
-
-
-
+(defn nearby-stations [{:keys [lat lon n]}]
+  (->> bike-stations
+       (map #(assoc % :distance (haversine/haversine {:latitude lat :longitude lon}
+                                                     {:latitude (:lat %) :longitude (:lon %)})))
+       (sort-by :distance <)
+       (take n)))
