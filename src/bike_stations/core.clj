@@ -2,36 +2,16 @@
   (:require [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.basic-authentication :refer [wrap-basic-authentication]]
             [reitit.ring :as ring]
-            [ring.util.response :refer [response redirect]]))
-
-(defn hello [ppreq]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body "Hello World"})
-
-(defn bike-stations-table [req]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body "Show html table"})
-
-(defn bike-stations-edn [req]
-  {:status 200
-   :headers {"Content-Type" "application/edn"}
-   :body (str [])})
-
-(defn bike-stations-json [req]
-  {:status 200
-   :headers {"Content-Type" "application/json"}
-   :body "[]"})
+            [bike-stations.handlers :as handlers]))
 
 (def handler
   (ring/ring-handler
    (ring/router
-    [["/" {:get {:handler hello}}]
-     ["/bike-stations" {:get {:handler bike-stations-table}}]
+    [["/" {:get {:handler handlers/hello}}]
+     ["/bike-stations" {:get {:handler handlers/bike-stations-table}}]
      ["/api/bike-stations"
-      [".edn" {:get {:handler bike-stations-edn}}]
-      [".json" {:get {:handler bike-stations-json}}]]])
+      [".edn" {:get {:handler handlers/bike-stations-edn}}]
+      [".json" {:get {:handler handlers/bike-stations-json}}]]])
    (ring/create-default-handler)))
 
 (defn authenticated? [name pass]
