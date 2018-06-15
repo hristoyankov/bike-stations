@@ -4,7 +4,7 @@
             [reitit.ring :as ring]
             [ring.util.response :refer [response redirect]]))
 
-(defn hello [req]
+(defn hello [ppreq]
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body "Hello World"})
@@ -47,3 +47,5 @@
   "Start the jetty server."
   [& args]
   (run-jetty app {:port 3000}))
+
+
