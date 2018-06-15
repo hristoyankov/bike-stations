@@ -22,6 +22,6 @@
    (http-auth/wrap-basic-authentication
     routes
     auth/authenticated?)
-   {:port 3000}))
+   {:port (System/getenv "BIKE_STATIONS_SERVER_PORT")}))
 
 
