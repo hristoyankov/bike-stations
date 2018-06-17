@@ -41,6 +41,9 @@
 (defn- valid? [{:keys [docks bikes spaces]}]
   (= 0 (- docks bikes spaces)))
 
+(defn- strip-fields [bs]
+  (dissoc bs :lat :lon :docks :spaces :distance))
+
 (defn nearby-stations [{:keys [lat lon n]}]
   (->> (get-tfl-bike-stations)
        (map tfl->bike-station)
@@ -48,4 +51,5 @@
        (map #(assoc % :distance (haversine/haversine {:latitude lat :longitude lon}
                                                      {:latitude (:lat %) :longitude (:lon %)})))
        (sort-by :distance <)
+       (map strip-fields)
        (take n)))
