@@ -1,12 +1,13 @@
 (ns bike-stations.handlers
   (:require [ring.util.response :as ring]
             [bike-stations.tfl :as api]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [bike-stations.renderers :as renderers]))
 
 (def marble-arch-coords {:lat 51.513110 :lon -0.158915})
 
 (defn hello [req]
-  (-> (ring/response "Hello World")
+  (-> (ring/response (renderers/welcome-page [marble-arch-coords]))
       (ring/content-type "text/html")))
 
 (defn bike-stations-table [req]

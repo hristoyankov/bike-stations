@@ -10,7 +10,8 @@
                  [metosin/reitit-core "0.1.2"]
                  [metosin/reitit-ring "0.1.2"]
                  [org.clojure/data.json "0.2.6"]
-                 [haversine "0.1.1"]]
+                 [haversine "0.1.1"]
+                 [hiccup "1.0.5"]]
   :main ^:skip-aot bike-stations.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
