@@ -1,36 +1,27 @@
 # bike-stations
 
-FIXME: description
-
-## Installation
-
-Download from http://example.com/FIXME.
+Bike stations is a simple project consuming data provided by TFL (https://tfl.gov.uk/) and shows the 5 closest stations to Marble Arch, London.
 
 ## Usage
 
-FIXME: explanation
+In order to run bike-stations locally you need [Leiningen](https://leiningen.org/). Before running there a couple of things that need configuring - you need to provide TFP API credentials in `env.sh` and configure the port at which the server will run. Once done run:
 
-    $ java -jar bike-stations-0.1.0-standalone.jar [args]
+   $ source ./env.sh
 
-## Options
+The service provides basic HTTP authentication. Adding new users is done by appending the data to `users_db.edn`. By default `guest:guest` user is added.
 
-FIXME: listing of options this app accepts.
+If everything is configured simple run should do the trick:
 
-## Examples
+   $ lein run
 
-...
+## Future improvements
 
-### Bugs
+If I have time I'd focus on adding the following functionalities:
 
-...
+* Add dynamic location entry (integration with Google Maps API). The app is designed so that it can easily adopt dynamic location and number of stations displayed (by query parameters).
+* Move from basic authentication to proper authentication mechanism, ideally providing SSO with Google, FB, Twitter, Github, etc.
+* Deploy and setup CI/CD.
+* Add styling and map (Google Maps/OSM) where the stations can be visualized and inspected.
 
-### Any Other Sections
-### That You Think
-### Might be Useful
 
-## License
 
-Copyright © 2018 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
