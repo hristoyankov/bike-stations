@@ -11,7 +11,7 @@
       (ring/content-type "text/html")))
 
 (defn bike-stations-table [req]
-  (-> (ring/response "Show html table")
+  (-> (ring/response (renderers/stations-table (api/nearby-stations (assoc marble-arch-coords :n 5))))
       (ring/content-type "text/html")))
 
 (defn bike-stations-edn [req]
