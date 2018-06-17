@@ -7,7 +7,7 @@
        "app_id=" (System/getenv "TFL_APP_ID")
        "&app_key=" (System/getenv "TFL_APP_KEY")))
 
-(def tfl-bike-stations
+(defn- get-tfl-bike-stations []
   (-> tfl-bike-stations-endpoint
       slurp
       (json/read-str :key-fn keyword)))
@@ -41,13 +41,10 @@
 (defn- valid? [{:keys [docks bikes spaces]}]
   (= 0 (- docks bikes spaces)))
 
-(def bike-stations
-  (->> tfl-bike-stations
-       (map tfl->bike-station)
-       (filter valid?)))
-
 (defn nearby-stations [{:keys [lat lon n]}]
-  (->> bike-stations
+  (->> (get-tfl-bike-stations)
+       (map tfl->bike-station)
+       (filter valid?)
        (map #(assoc % :distance (haversine/haversine {:latitude lat :longitude lon}
                                                      {:latitude (:lat %) :longitude (:lon %)})))
        (sort-by :distance <)
